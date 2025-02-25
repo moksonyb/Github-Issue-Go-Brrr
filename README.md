@@ -1,3 +1,4 @@
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-%23FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/moksony)
 # Github Issue Go Brrr 🖨️
  
 
@@ -5,18 +6,18 @@ This TypeScript application listens for GitHub webhook events and prints new iss
 
 ![brrr](https://media1.tenor.com/m/E_3IiT0nbvMAAAAd/jerome-powell-money-printer-go-brrr.gif)
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-%23FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/moksony)
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/bmoksony/github-issue-printer/main/img/issue.jpeg" alt="Example of a printed GitHub issue receipt" width="400"/>
-  <p><em>Example of a printed GitHub issue receipt</em></p>
-</div>
 
 ## ✅ Requirements
 
 - Node.js (v14 or higher) or Docker
 - An Epson thermal printer with ESC/POS support (USB or network-connected)
 - A publicly accessible URL for GitHub webhooks (you can use ngrok for testing)
+
+## 📸 Pictures
+<div align="center">
+  <img src="https://raw.githubusercontent.com/moksonyb/Github-Issue-Go-Brrr/refs/heads/main/img/issue.jpeg" alt="Example of a printed GitHub issue receipt" height="400"/>
+  <p><em>Example of a printed GitHub issue receipt</em></p>
+</div>
 
 ## 🚀 Setup
 
