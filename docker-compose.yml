@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  github-issue-printer:
+    build: .
+    container_name: github-issue-printer
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
+      - GITHUB_ISSUE_ACTIONS=${GITHUB_ISSUE_ACTIONS:-opened,reopened}
+      - PRINTER_TYPE=${PRINTER_TYPE:-network}
+      - PRINTER_IP=${PRINTER_IP:-10.2.1.251}
+      - PRINTER_PORT=${PRINTER_PORT:-9100}
+    restart: unless-stopped
+    # For USB printer support, uncomment the following lines:
+    # devices:
+    #   - /dev/bus/usb:/dev/bus/usb
+    # privileged: true 
