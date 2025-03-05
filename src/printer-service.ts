@@ -1,5 +1,5 @@
 import escpos = require('escpos');
-import { PrinterConfig, GitHubIssueEvent, GitHubPullRequestEvent, GitHubEvent } from './types';
+import { PrinterConfig, GitHubIssueEvent, GitHubPullRequestEvent, GitHubEvent, GitHubCommitEvent } from './types';
 import { EpsonQRCode, QRModel, QRErrorCorrectionLevel } from './epson-qrcode';
 
 // These require statements are needed because of how escpos is structured
@@ -37,6 +37,8 @@ export class PrinterService {
             this.printIssueEvent(printer, event);
           } else if ('pull_request' in event) {
             this.printPullRequestEvent(printer, event);
+          } else if ('commit' in event) {
+            this.printCommitEvent(printer, event);
           }
 
           console.log(`Printed GitHub event`);
@@ -163,6 +165,105 @@ export class PrinterService {
       .align('ct')
       // Use the custom QR code implementation with smaller size
       .raw(EpsonQRCode.generate(pr.html_url, {
+        model: QRModel.Model2,
+        size: 5,
+        errorCorrectionLevel: QRErrorCorrectionLevel.M
+      }))
+      .text('\n')
+      .align('lt')
+      .text(`Printed: ${new Date().toLocaleString()}`)
+      .cut()
+      .close();
+  }
+
+  private printCommitEvent(printer: any, event: GitHubCommitEvent): void {
+    const commit = event.commit;
+    const repo = event.repository;
+    const action = event.action;
+    const branch = event.branch;
+
+    // Format the header
+    const header = 'New GitHub Commit';
+
+    // Format the commit message (first line as title, rest as body)
+    const commitLines = commit.message.split('\n');
+    const commitTitle = commitLines[0];
+    const commitBody = commitLines.slice(1).join('\n').trim();
+
+    // Print the commit
+    printer
+      .font('a')
+      .align('ct')
+      .style('b')
+      .size(1, 1)
+      .text(header)
+      .text('------------------------')
+      .align('lt')
+      .style('normal')
+      .size(0, 0)
+      .text(`Repository: ${repo.full_name}`)
+      .text(`Branch: ${branch}`)
+      .text(`Commit: ${commit.sha.substring(0, 7)}`)
+      .text(`Author: ${commit.author.name} <${commit.author.email}>`)
+      .text(`Date: ${new Date(commit.author.date).toLocaleString()}`)
+      .text('\n')
+      .text('Message:')
+      .text('------------------------')
+      .style('b')
+      .text(commitTitle)
+      .style('normal')
+      .text(commitBody || '')
+      .text('------------------------');
+
+    // Print file changes if available
+    if (commit.files) {
+      printer.text('\nChanged Files:');
+      
+      if (commit.files.added.length > 0) {
+        printer
+          .text('Added:')
+          .style('b');
+        
+        commit.files.added.forEach(file => {
+          printer.text(`+ ${file}`);
+        });
+        
+        printer.style('normal');
+      }
+      
+      if (commit.files.modified.length > 0) {
+        printer
+          .text('Modified:')
+          .style('b');
+        
+        commit.files.modified.forEach(file => {
+          printer.text(`~ ${file}`);
+        });
+        
+        printer.style('normal');
+      }
+      
+      if (commit.files.removed.length > 0) {
+        printer
+          .text('Removed:')
+          .style('b');
+        
+        commit.files.removed.forEach(file => {
+          printer.text(`- ${file}`);
+        });
+        
+        printer.style('normal');
+      }
+      
+      printer.text('------------------------');
+    }
+
+    printer
+      .text(`URL: ${commit.html_url}`)
+      .text('\n')
+      .align('ct')
+      // Use the custom QR code implementation with smaller size
+      .raw(EpsonQRCode.generate(commit.html_url, {
         model: QRModel.Model2,
         size: 5,
         errorCorrectionLevel: QRErrorCorrectionLevel.M

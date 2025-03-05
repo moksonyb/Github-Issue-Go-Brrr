@@ -10,6 +10,22 @@ export interface PrinterConfig {
   };
 }
 
+export interface GitHubAPIConfig {
+  token: string;
+  repositories: string[]; // Format: "owner/repo"
+  pollingInterval: number; // in milliseconds
+  issueActions: string[];
+  prActions: string[];
+  commitActions: string[]; // Actions for commits (pushed, etc.)
+}
+
+export interface AppConfig {
+  mode: 'webhook' | 'api';
+  webhookSecret?: string;
+  api?: GitHubAPIConfig;
+  allowedIssueActions: string[];
+}
+
 export interface GitHubRepository {
   id: number;
   full_name: string;
@@ -76,6 +92,43 @@ export interface GitHubPullRequestEvent {
   sender: GitHubUser;
 }
 
+export interface GitHubCommit {
+  id: string;
+  message: string;
+  url: string;
+  author: {
+    name: string;
+    email: string;
+    date: string;
+  };
+  committer: {
+    name: string;
+    email: string;
+    date: string;
+  };
+  tree: {
+    sha: string;
+    url: string;
+  };
+  distinct: boolean;
+  sha: string;
+  html_url: string;
+  files?: {
+    added: string[];
+    modified: string[];
+    removed: string[];
+  };
+}
+
+export interface GitHubCommitEvent {
+  action: string;
+  commit: GitHubCommit;
+  repository: GitHubRepository;
+  sender: GitHubUser;
+  branch: string;
+}
+
 export type GitHubEvent = 
   | GitHubIssueEvent 
-  | GitHubPullRequestEvent; 
+  | GitHubPullRequestEvent
+  | GitHubCommitEvent; 

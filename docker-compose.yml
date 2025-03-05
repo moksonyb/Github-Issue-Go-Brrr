@@ -8,11 +8,23 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
+      # Application mode: webhook or api
+      - GITHUB_MODE=${GITHUB_MODE:-webhook}
+      # Webhook mode settings
       - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
+      # API mode settings
+      - GITHUB_API_TOKEN=${GITHUB_API_TOKEN}
+      - GITHUB_REPOSITORIES=${GITHUB_REPOSITORIES}
+      - GITHUB_POLLING_INTERVAL=${GITHUB_POLLING_INTERVAL:-60000}
+      # Common settings
       - GITHUB_ISSUE_ACTIONS=${GITHUB_ISSUE_ACTIONS:-opened,reopened}
+      - GITHUB_COMMIT_ACTIONS=${GITHUB_COMMIT_ACTIONS:-pushed}
+      # Printer settings
       - PRINTER_TYPE=${PRINTER_TYPE:-network}
       - PRINTER_IP=${PRINTER_IP:-10.2.1.251}
       - PRINTER_PORT=${PRINTER_PORT:-9100}
+      - PRINTER_VENDOR_ID=${PRINTER_VENDOR_ID}
+      - PRINTER_PRODUCT_ID=${PRINTER_PRODUCT_ID}
     restart: unless-stopped
     # For USB printer support, uncomment the following lines:
     # devices:
